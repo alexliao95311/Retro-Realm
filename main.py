@@ -22,7 +22,7 @@ row_num = 1
 col_num = 0
 
 for game in game_files:
-    if ".py" not in game:
+    if "." not in game:
         button = tk.Button(root, text=game, command=lambda game=game: run_game(game), width = 20, height = 5)
         button.grid(row=row_num, column = col_num, padx = 10, pady = 10)
         col_num += 1
