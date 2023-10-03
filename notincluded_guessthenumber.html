@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guess the Number Game</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #f0f0f0;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        #container {
+            background-color: #3498db;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+            width: 100%;
+            max-width: 400px;
+            padding: 20px;
+        }
+
+        h1 {
+            color: #fff;
+        }
+
+        p {
+            font-size: 18px;
+            color: #fff;
+        }
+
+        #singlePlayerButton,
+        #twoPlayerButton,
+        #homeButton {
+            padding: 5px 10px;
+            font-size: 16px;
+            background-color: #e74c3c;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+            margin: 10px;
+            border-radius: 5px;
+        }
+
+        #singlePlayerButton:hover,
+        #twoPlayerButton:hover,
+        #homeButton:hover {
+            background-color: #c0392b;
+        }
+
+    </style>
+</head>
+<body>
+    <div id="container">
+        <h1>Guess the Number Game</h1>
+        <p>Select the game mode:</p>
+        <button id="singlePlayerButton">Single Player</button>
+        <button id="twoPlayerButton">Two Player</button>
+    </div>
+    <button id="homeButton" style="position: absolute; top: 10px; left: 10px;">Home</button>
+
+    <script>
+        const container = document.getElementById('container');
+        const singlePlayerButton = document.getElementById('singlePlayerButton');
+        const twoPlayerButton = document.getElementById('twoPlayerButton');
+        const homeButton = document.getElementById('homeButton');
+
+        // Event listeners for mode selection buttons
+        singlePlayerButton.addEventListener('click', () => {
+            container.innerHTML = ''; // Clear the container
+            setupSinglePlayerGame();
+        });
+
+        twoPlayerButton.addEventListener('click', () => {
+            container.innerHTML = ''; // Clear the container
+            setupTwoPlayerGame();
+        });
+
+        homeButton.addEventListener('click', () => {
+            window.location.reload(); // Reload the page to go back to the home screen
+        });
+
+        function setupSinglePlayerGame() {
+            // Single-player game setup here
+            // Generate a random number between 1 and 100
+            const targetNumber = Math.floor(Math.random() * 100) + 1;
+
+            let attempts = 10;
+            let gameOver = false;
+
+            // Create elements for single-player game
+            const instructions = document.createElement('p');
+            instructions.textContent = 'Guess a whole number between 1 and 100:';
+            container.appendChild(instructions);
+
+            const guessInput = document.createElement('input');
+            guessInput.type = 'text';
+            guessInput.id = 'guessInput';
+            container.appendChild(guessInput);
+
+            const guessButton = document.createElement('input');
+            guessButton.type = 'submit';
+            guessButton.value = 'Submit Guess';
+            guessButton.id = 'guessButton';
+            container.appendChild(guessButton);
+
+            const output = document.createElement('p');
+            output.id = 'output';
+            container.appendChild(output);
+
+            // Event listener for guessButton
+            guessButton.addEventListener('click', () => {
+                if (gameOver) {
+                    return;
+                }
+
+                const userGuess = guessInput.value;
+
+                if (isNaN(userGuess) || userGuess.includes('.') || userGuess < 1 || userGuess > 100) {
+                    output.textContent = 'Please enter a valid whole number between 1 and 100.';
+                    return;
+                }
+
+                const intGuess = parseInt(userGuess);
+                attempts--;
+
+                if (intGuess === targetNumber) {
+                    output.textContent = `Congratulations! You guessed the correct number (${targetNumber}) in ${10 - attempts} attempts.`;
+                    gameOver = true;
+                } else if (attempts === 0) {
+                    output.textContent = `Game over! The correct number was ${targetNumber}.`;
+                    gameOver = true;
+                } else {
+                    const hint = intGuess < targetNumber ? 'higher' : 'lower';
+                    output.textContent = `Wrong guess! Try again. You have ${attempts} attempts left. Hint: Guess ${hint}.`;
+                }
+
+                guessInput.value = '';
+            });
+        }
+
+        function setupTwoPlayerGame() {
+    // Two-player game setup here
+    // Create elements for two-player game
+    const instructions = document.createElement('p');
+    instructions.textContent = 'Player 1, enter a secret whole number between 1 and 100:';
+    container.appendChild(instructions);
+
+    const player1Input = document.createElement('input');
+    player1Input.type = 'text';
+    player1Input.id = 'player1Input';
+    container.appendChild(player1Input);
+
+    const submitSecretButton = document.createElement('input');
+    submitSecretButton.type = 'submit';
+    submitSecretButton.value = 'Submit Secret Number';
+    submitSecretButton.id = 'submitSecretButton';
+    container.appendChild(submitSecretButton);
+
+    const player2Input = document.createElement('input');
+    player2Input.type = 'text';
+    player2Input.id = 'player2Input';
+    player2Input.style.display = 'none'; // Hide player2Input initially
+    container.appendChild(player2Input);
+
+    const guessButton = document.createElement('input');
+    guessButton.type = 'submit';
+    guessButton.value = 'Submit Guess';
+    guessButton.id = 'guessButton';
+    guessButton.style.display = 'none'; // Hide guessButton initially
+    container.appendChild(guessButton);
+
+    const output = document.createElement('p');
+    output.id = 'output';
+    container.appendChild(output);
+
+    let currentPlayer = 1;
+    let secretNumber;
+    let attempts = 10;
+    let gameOver = false;
+
+    // Event listener for submitSecretButton
+    submitSecretButton.addEventListener('click', () => {
+        if (gameOver) {
+            return;
+        }
+
+        const secretGuess = player1Input.value;
+
+        if (isNaN(secretGuess) || secretGuess.includes('.') || secretGuess < 1 || secretGuess > 100) {
+            output.textContent = 'Player 1, please enter a valid secret whole number between 1 and 100.';
+            return;
+        }
+
+        secretNumber = parseInt(secretGuess);
+        player1Input.style.display = 'none'; // Hide player1Input
+        submitSecretButton.style.display = 'none'; // Hide submitSecretButton
+        player2Input.style.display = 'block'; // Show player2Input
+        guessButton.style.display = 'block'; // Show guessButton
+
+        instructions.textContent = 'Player 2, guess the secret number:';
+        currentPlayer = 2;
+        player1Input.value = ''; // Clear player1Input
+    });
+
+    // Event listener for guessButton
+    guessButton.addEventListener('click', () => {
+        if (gameOver) {
+            return;
+        }
+
+        const userGuess = player2Input.value;
+
+        if (isNaN(userGuess) || userGuess.includes('.') || userGuess < 1 || userGuess > 100) {
+            output.textContent = 'Player 2, please enter a valid whole number between 1 and 100.';
+            return;
+        }
+
+        const intGuess = parseInt(userGuess);
+        attempts--;
+
+        if (intGuess === secretNumber) {
+            output.textContent = `Congratulations, Player 2! You guessed the correct secret number (${secretNumber}) in ${10 - attempts} attempts.`;
+            gameOver = true;
+        } else if (attempts === 0) {
+            output.textContent = `Game over! Player 2, the correct secret number was ${secretNumber}.`;
+            gameOver = true;
+        } else {
+            const hint = intGuess < secretNumber ? 'higher' : 'lower';
+            output.textContent = `Player 2, wrong guess! Try again. You have ${attempts} attempts left. Hint: Guess ${hint}.`;
+        }
+
+        player2Input.value = '';
+    });
+}
+
+    </script>
+</body>
+</html>
